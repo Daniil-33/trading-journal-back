@@ -1,6 +1,6 @@
-# Macro Analytics Backend API
+# Trading Journal Backend API
 
-Backend API для приложения Macro Analytics, построенный с использованием **Clean Architecture**.
+Backend API для приложения Trading Journal, построенный с использованием **Clean Architecture**.
 
 ## 🏗️ Архитектура
 
@@ -44,7 +44,7 @@ src/
 ## ⚙️ Установка
 
 ```bash
-cd market-backend
+cd trading-journal-backend
 
 # Установить зависимости
 npm install

@@ -1,6 +1,6 @@
-# Macro Analytics Backend API
+# Trading Journal Backend API
 
-REST API сервер с Clean Architecture для приложения Macro Analytics.
+REST API сервер с Clean Architecture для приложения Trading Journal.
 
 ## 🚀 Быстрый старт
 
