@@ -2,7 +2,7 @@
  * JWT utilities
  */
 
-import jwt from 'jsonwebtoken'
+import * as jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret_change_in_production'
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d'
@@ -23,11 +23,11 @@ export function generateTokens(payload: TokenPayload): {
     refreshToken: string
 } {
     const accessToken = jwt.sign(payload, JWT_SECRET, {
-        expiresIn: JWT_EXPIRES_IN as string
+        expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn']
     })
 
     const refreshToken = jwt.sign(payload, JWT_SECRET, {
-        expiresIn: JWT_REFRESH_EXPIRES_IN as string
+        expiresIn: JWT_REFRESH_EXPIRES_IN as jwt.SignOptions['expiresIn']
     })
 
     return { accessToken, refreshToken }

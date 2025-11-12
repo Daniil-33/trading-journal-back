@@ -4,6 +4,7 @@
 
 import { Router } from 'express'
 import { createAuthRoutes } from './auth.routes'
+import indicatorRoutes from './indicator.routes'
 import { IUserRepository } from '../../domain/repositories/IUserRepository'
 
 export function createRouter(userRepository: IUserRepository): Router {
@@ -11,6 +12,7 @@ export function createRouter(userRepository: IUserRepository): Router {
 
     // Mount routes
     router.use('/auth', createAuthRoutes(userRepository))
+    router.use('/indicators', indicatorRoutes)
 
     // Health check
     router.get('/health', (req, res) => {
