@@ -73,8 +73,9 @@ export class MongoIndicatorRepository implements IIndicatorRepository {
             frequency: doc.frequency,
             publishingTime: doc.publishingTime,
             affectedCurrencies: doc.affectedCurrencies,
+            affectedPairs: doc.affectedPairs,
             title: doc.title,
-            description: doc.description,
+            info: doc.info,
             forexFactoryId: doc.forexFactoryId,
             createdAt: doc.createdAt,
             updatedAt: doc.updatedAt

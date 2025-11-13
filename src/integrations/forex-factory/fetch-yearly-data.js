@@ -3,17 +3,24 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs');
 const path = require('path');
+const { FOREX_FACTORY_CURRENCY_IDS, CURRENCY_NAMES } = require('../../shared/constants/currencies');
 
 puppeteer.use(StealthPlugin());
 
-// Currency IDs from Forex Factory
-// EUR: 15, USD: 12, GBP: 9, JPY: 14
-const TARGET_CURRENCIES = [5, 6, 7, 9];
-const CURRENCY_NAMES = {
-  5: 'EUR',
-  6: 'GBP',
-  9: 'USD',
-  7: 'JPY'
+// Target currencies for data collection
+const TARGET_CURRENCIES = [
+  FOREX_FACTORY_CURRENCY_IDS.EUR,
+  FOREX_FACTORY_CURRENCY_IDS.GBP,
+  FOREX_FACTORY_CURRENCY_IDS.JPY,
+  FOREX_FACTORY_CURRENCY_IDS.USD
+];
+
+// For display purposes
+const CURRENCY_DISPLAY_NAMES = {
+  [FOREX_FACTORY_CURRENCY_IDS.EUR]: 'EUR',
+  [FOREX_FACTORY_CURRENCY_IDS.GBP]: 'GBP',
+  [FOREX_FACTORY_CURRENCY_IDS.JPY]: 'JPY',
+  [FOREX_FACTORY_CURRENCY_IDS.USD]: 'USD'
 };
 
 // Generate date ranges for the last 12 months (Oct 2024 - Oct 2025)
@@ -141,7 +148,7 @@ function formatDate(date) {
       from: '2024-10-01',
       to: '2025-10-31'
     },
-    currencies: Object.values(CURRENCY_NAMES),
+    currencies: TARGET_CURRENCIES.map(id => CURRENCY_DISPLAY_NAMES[id] || id),
     totalEvents: allEvents.length,
     events: allEvents
   }, null, 2), 'utf-8');

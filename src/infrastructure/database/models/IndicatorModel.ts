@@ -11,8 +11,13 @@ export interface IIndicatorDocument extends Document {
     frequency: 'annual' | 'quarterly' | 'monthly' | 'weekly' | 'daily' | null
     publishingTime: 'certain' | 'uncertain'
     affectedCurrencies: string[]
+    affectedPairs: string[]
     title: string
-    description: string
+    info: Array<{
+        order: number
+        title: string
+        html: string
+    }>
     forexFactoryId?: string
     createdAt: Date
     updatedAt: Date
@@ -48,13 +53,23 @@ const IndicatorSchema = new Schema<IIndicatorDocument>(
             required: true,
             default: []
         },
+        affectedPairs: {
+            type: [String],
+            required: true,
+            default: []
+        },
         title: {
             type: String,
             required: true
         },
-        description: {
-            type: String,
-            required: true
+        info: {
+            type: [{
+                order: Number,
+                title: String,
+                html: String
+            }],
+            required: true,
+            default: []
         },
         forexFactoryId: {
             type: String,

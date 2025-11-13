@@ -9,7 +9,10 @@
     "start": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "fetch-forex-data": "node src/integrations/forex-factory/fetch-yearly-data.js",
-    "import-indicators": "ts-node src/integrations/forex-factory/import-to-db.ts"
+    "enrich-indicators": "node src/integrations/forex-factory/enrich-indicators.js",
+    "import-indicators": "ts-node src/integrations/forex-factory/import-to-db.ts",
+    "import-enriched": "ts-node src/integrations/forex-factory/import-enriched.ts",
+    "update-indicators-specs": "ts-node src/integrations/forex-factory/update-indicators-specs.ts"
   },
   "keywords": [],
   "author": "",

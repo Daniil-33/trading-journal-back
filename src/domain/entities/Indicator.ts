@@ -2,6 +2,12 @@
  * Indicator Entity - Domain Model
  */
 
+export interface IndicatorSpec {
+    order: number
+    title: string
+    html: string
+}
+
 export interface IIndicator {
     id?: string
     name: string
@@ -10,8 +16,9 @@ export interface IIndicator {
     frequency: 'annual' | 'quarterly' | 'monthly' | 'weekly' | 'daily' | null
     publishingTime: 'certain' | 'uncertain'
     affectedCurrencies: string[]
+    affectedPairs: string[]
     title: string
-    description: string
+    info: IndicatorSpec[]
     forexFactoryId?: string
     createdAt?: Date
     updatedAt?: Date
@@ -25,8 +32,9 @@ export class Indicator {
         public readonly frequency: 'annual' | 'quarterly' | 'monthly' | 'weekly' | 'daily' | null,
         public readonly publishingTime: 'certain' | 'uncertain',
         public readonly affectedCurrencies: string[],
+        public readonly affectedPairs: string[],
         public readonly title: string,
-        public readonly description: string,
+        public readonly info: IndicatorSpec[],
         public readonly id?: string,
         public readonly createdAt?: Date,
         public readonly updatedAt?: Date
@@ -40,8 +48,9 @@ export class Indicator {
             data.frequency,
             data.publishingTime,
             data.affectedCurrencies,
+            data.affectedPairs,
             data.title,
-            data.description
+            data.info
         )
     }
 }

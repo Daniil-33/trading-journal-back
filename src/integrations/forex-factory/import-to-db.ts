@@ -10,6 +10,8 @@ import { connectDatabase } from '../../infrastructure/database/connection'
 import { ImportIndicators } from '../../application/use-cases/ImportIndicators'
 import { MongoIndicatorRepository } from '../../infrastructure/repositories/MongoIndicatorRepository'
 import { IIndicator } from '../../domain/entities/Indicator'
+import { Currency, getCurrencyByCountry } from '../../shared/constants/currencies'
+import { getAffectedPairs } from '../../shared/constants/currency-pairs'
 
 // Impact mapping from Forex Factory
 const IMPACT_MAP: Record<string, 'low' | 'medium' | 'high'> = {
@@ -42,22 +44,30 @@ function detectPublishingTime(timeMasked: boolean): 'certain' | 'uncertain' {
 function getAffectedCurrencies(currencyCode: string, country: string): string[] {
   const currencies = [currencyCode]
   
-  // Add country code if different from currency
+  // Try to get currency from country code using shared constants
   if (country && country !== currencyCode) {
-    // Some countries use different currency codes
-    const countryToCurrency: Record<string, string> = {
-      'EU': 'EUR',
-      'UK': 'GBP',
-      'US': 'USD',
-      'JP': 'JPY'
-    }
-    
-    if (countryToCurrency[country] && !currencies.includes(countryToCurrency[country])) {
-      currencies.push(countryToCurrency[country])
+    const countryCurrency = getCurrencyByCountry(country)
+    if (countryCurrency && !currencies.includes(countryCurrency)) {
+      currencies.push(countryCurrency)
     }
   }
   
   return currencies
+}
+
+// Get affected currency pairs
+function getAffectedCurrencyPairs(currencies: string[]): string[] {
+  try {
+    const currencyEnums = currencies
+      .filter(c => Object.values(Currency).includes(c as Currency))
+      .map(c => c as Currency)
+    
+    const pairs = getAffectedPairs(currencyEnums)
+    return pairs.map(pair => pair.symbol)
+  } catch (error) {
+    console.error('Error getting affected pairs:', error)
+    return []
+  }
 }
 
 // Transform Forex Factory event to Indicator entity
@@ -80,6 +90,9 @@ function transformEvent(event: any): Omit<IIndicator, 'id' | 'createdAt' | 'upda
     // Get affected currencies
     const affectedCurrencies = getAffectedCurrencies(event.currency, event.country)
     
+    // Get affected pairs
+    const affectedPairs = getAffectedCurrencyPairs(affectedCurrencies)
+    
     return {
       name: event.name,
       country: event.country,
@@ -87,8 +100,9 @@ function transformEvent(event: any): Omit<IIndicator, 'id' | 'createdAt' | 'upda
       frequency,
       publishingTime,
       affectedCurrencies,
+      affectedPairs,
       title: event.soloTitle || event.prefixedName || event.name,
-      description: event.notice || event.soloTitleFull || event.name,
+      info: [], // Empty for now, will be enriched later
       forexFactoryId: String(event.ebaseId)
     }
   } catch (error) {
@@ -100,8 +114,9 @@ function transformEvent(event: any): Omit<IIndicator, 'id' | 'createdAt' | 'upda
 async function main() {
   console.log('🚀 Starting data transformation and import...\n')
 
-  // Read the data file
-  const dataPath = path.join(__dirname, 'unique-indicators.json')
+  // Read the data file - use path relative to project root
+  const projectRoot = path.join(__dirname, '../../..')
+  const dataPath = path.join(projectRoot, 'src/integrations/forex-factory/unique-indicators.json')
   
   if (!fs.existsSync(dataPath)) {
     console.error('❌ Data file not found:', dataPath)
